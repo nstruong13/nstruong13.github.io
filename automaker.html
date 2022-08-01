@@ -1,0 +1,97 @@
+<html>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<style> circle {fill: lightblue; stroke: black;} </style>
+<body onload='init()'>
+<svg width=1000 height=1000>
+</svg>
+<script>
+async function init() {
+	data = await d3.csv("https://flunky.github.io/cars2017.csv")
+	console.log(data[0])
+	var width = 700;
+	var height = 700;
+
+	var makers = [... new Set(data.map((d,i) => d["Make"]))];
+	makers.sort();
+
+	var makersToIndex = new Map();
+	makers.forEach((m,i)=> makersToIndex.set(m,i));
+
+	var makersToValue = new Map();
+	var makersCount = new Map();
+	var makersToFuelType = new Map();
+	data.forEach((d) => 
+		{
+			if (!makersCount.has(d["Make"])) {
+				makersCount.set(d["Make"], 0)
+				makersToValue.set(d["Make"], 0)
+				makersToFuelType.set(d["Make"], new Set())
+			}
+			makersCount.set(d["Make"], makersCount.get(d["Make"]) + 1)
+			makersToValue.set(d["Make"], (makersToValue.get(d["Make"]) + parseInt(d["AverageCityMPG"])))
+			makersToFuelType.get(d["Make"]).add(d["Fuel"])
+		}
+	);
+
+	var finalMakersToValue = new Map();
+	for (const key of makersToValue.keys()) {
+		finalMakersToValue.set(key, makersToValue.get(key)/makersCount.get(key));
+	};
+
+
+	var label = d3.select("body")
+	    .append("div")
+	    .style("position", "absolute")
+	    .style("z-index", "10");
+
+
+	console.log(makersToFuelType);
+
+
+
+
+	var x = d3.scaleBand().domain([...makersToIndex.values()]).range([0,width]);
+	var y = d3.scaleLinear().domain([0,Math.max(...finalMakersToValue.values())]).range([height,0]);
+	var margin = 50;
+
+	var summaryText = "This chart shows MPG of manufacturers. Those in green have invested in electric vehicles."
+	var summaryText2 = "If you hover over the bar, you can see all vehicle types." 
+
+	d3.select("svg")
+	.attr("width", width + 2*margin)
+	.attr("height",height+2*margin+400)
+	.append("g")
+	.attr("transform","translate("+margin+","+margin+")")
+	.selectAll("rect").data(data).enter().append("rect")
+		.attr("x", function(d){return x(makersToIndex.get(d["Make"]))+6;})
+		.attr("y", function(d){return y(finalMakersToValue.get(d["Make"]));})
+		.attr("width", function(d){return 5;})
+		.attr("height", function(d){return height - y(finalMakersToValue.get(d["Make"]));})
+		.on("mousemove", function(d){return label.style("top", (d3.event.clientY-8)+"px").style("left",(d3.event.clientX+8)+"px").style("visibility", "visible").text([...makersToFuelType.get(d["Make"])].toString());})
+		.on("mouseout", function(d){return label.style("visibility", "hidden").text(d["Make"]);})
+		.attr("fill", function(d){return makersToFuelType.get(d["Make"]).has("Electricity") ?  "green" : "black" });
+
+	d3.select("svg").append("g").attr("transform","translate("+margin+","+margin+")").call(d3.axisLeft(y));
+
+
+	d3.select("svg").append("g").attr("transform","translate("+margin+","+(height+margin)+")")
+		.call(d3.axisBottom(x).tickFormat((d, i) => makers[i]))
+		.selectAll("text").attr("transform", "rotate(90) translate("+10+","+(-12)+")").attr("text-anchor", "start");
+
+	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+50)/2+") rotate(-90)").text("Average City MPG");
+	d3.select("svg").append("text").attr("transform","translate("+(width/2)+","+(height+150)+")").text("Manufacturer");
+
+	d3.select("svg").append("text").attr("transform", "translate("+(width/2)+","+20+")").text("Overview of Fuel Efficency").style("font-size", "24px");
+
+
+	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+200)+")").text(summaryText).style("font-size", "14px");
+	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+220)+")").text(summaryText2).style("font-size", "14px");
+
+	d3.select("svg").append("text").attr("transform", "translate("+width+","+(height+240)+")").text("Next").style("font-size", "20px")
+		.on("click", function(){window.open("cylinder.html")});
+
+
+}
+</script>
+</body>
+</html>
