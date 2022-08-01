@@ -7,9 +7,10 @@
 <script>
 async function init() {
 	data = await d3.csv("https://flunky.github.io/cars2017.csv")
-	console.log(data[0])
 	var width = 700;
 	var height = 700;
+	var line = "---------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
 
 	var makers = [... new Set(data.map((d,i) => d["Make"]))];
 	makers.sort();
@@ -45,7 +46,6 @@ async function init() {
 	    .style("z-index", "10");
 
 
-	console.log(makersToFuelType);
 
 
 
@@ -69,9 +69,10 @@ async function init() {
 		.attr("height", function(d){return height - y(finalMakersToValue.get(d["Make"]));})
 		.on("mousemove", function(d){return label.style("top", (d3.event.clientY-8)+"px").style("left",(d3.event.clientX+8)+"px").style("visibility", "visible").text([...makersToFuelType.get(d["Make"])].toString());})
 		.on("mouseout", function(d){return label.style("visibility", "hidden").text(d["Make"]);})
-		.attr("fill", function(d){return makersToFuelType.get(d["Make"]).has("Electricity") ?  "green" : "black" });
+		.attr("fill", function(d){return makersToFuelType.get(d["Make"]).has("Electricity") ?  "green" : "gray" });
 
 	d3.select("svg").append("g").attr("transform","translate("+margin+","+margin+")").call(d3.axisLeft(y));
+
 
 
 	d3.select("svg").append("g").attr("transform","translate("+margin+","+(height+margin)+")")
@@ -81,14 +82,21 @@ async function init() {
 	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+50)/2+") rotate(-90)").text("Average City MPG");
 	d3.select("svg").append("text").attr("transform","translate("+(width/2)+","+(height+150)+")").text("Manufacturer");
 
-	d3.select("svg").append("text").attr("transform", "translate("+(width/2)+","+20+")").text("Overview of Fuel Efficency").style("font-size", "24px");
+	d3.select("svg").append("text").attr("transform", "translate("+((width-300)/2)+","+20+")").text("Manufacturer's Avg MPG and Investments").style("font-size", "24px");
 
+	d3.select("svg").append("text").attr("transform", "translate("+120+","+(height/3)+")").text("Less than half of all manufactuers are focused on electric vehicles").style("font-size", "14px");
+
+	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+180)+")").text(line).style("font-size", "14px");
 
 	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+200)+")").text(summaryText).style("font-size", "14px");
 	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+220)+")").text(summaryText2).style("font-size", "14px");
 
-	d3.select("svg").append("text").attr("transform", "translate("+width+","+(height+240)+")").text("Next").style("font-size", "20px")
-		.on("click", function(){window.open("cylinder.html")});
+	d3.select("svg").append("text").attr("transform", "translate("+(width+20)+","+(height+260)+")").text("Next").style("font-size", "20px").attr("fill", "blue")
+		.on("click", function(){window.open("cylinder.html","_self")});
+		d3.select("svg").append("text").attr("transform", "translate("+(width+50)+","+(height+290)+")").text("2").style("font-size", "14px")
+		.on("click", function(){window.open("cylinder.html","_self")});
+	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+260)+")").text("Back").style("font-size", "20px").attr("fill", "blue")
+		.on("click", function(){window.open("index.html","_self")});
 
 
 }
