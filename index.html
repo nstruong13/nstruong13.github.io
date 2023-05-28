@@ -10,7 +10,8 @@ async function init() {
     const queryString = window.location.search;
     console.log(queryString);
     fileId = queryString.split("=")[1]
-    path = 'https://drive.google.com/uc?export=download&id='+fileId
+    // path = 'https://drive.google.com/uc?export=download&id='+fileId
+    path = fileId
 
     $.getJSON(path, function(data) {
         console.log(data)
