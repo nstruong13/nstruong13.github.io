@@ -1,56 +1,23 @@
+<!DOCTYPE html>
 <html>
-<script src='https://d3js.org/d3.v5.min.js'></script>
-<style> circle {fill: lightblue; stroke: black;} </style>
-<body onload='init()'>
-<svg width=1000 height=1000>
-</svg>
-<script>
-async function init() {
-	data = await d3.csv("https://flunky.github.io/cars2017.csv")
-	var width = 700;
-	var height = 700;
-	var line = "---------------------------------------------------------------------------------------------------------------------------------------------------------------"
-
-	var x = d3.scaleLog().domain([10,150]).range([0,width]);
-	var y = d3.scaleLog().domain([10,150]).range([height,0]);
-	var label = d3.select("body")
-	    .append("div")
-	    .style("position", "absolute")
-	    .style("z-index", "10");
-
-	var summaryText = "This chart shows the general trend between highway MPG and city MPG. The size of the circle represents the size of the engine."
-	var summaryText2 = "Green circles are electric vehicles. If you hover over the circle, you can see the manufacturer of the vehicle." 
-
-	d3.select("svg").append('g').attr("transform","translate("+50+","+50+")").selectAll("dot").data(data).enter().append("circle")
-		.attr("cx",function(d){return x(d["AverageCityMPG"]);}).attr("cy",function(d){return y(d["AverageHighwayMPG"]);})
-		.attr("r", function(d){return 4 + parseInt(d["EngineCylinders"]);})
-		.on("mousemove", function(d){return label.style("top", (d3.event.clientY-8)+"px").style("left",(d3.event.clientX+8)+"px").style("visibility", "visible").text(d["Make"]);})
-		.on("mouseout", function(d){return label.style("visibility", "hidden").text(d["Make"]);})
-		.style("fill", function(d){ return d["EngineCylinders"] == 0 ? "green" : "gray"});
-
-
-	d3.select("svg").append("g").attr("transform","translate("+50+","+50+")").call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(function(d){return d;}));
-
-
-	d3.select("svg").append("g").attr("transform","translate("+50+","+(height+50)+")").call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(function(d){return d;}));
-
-	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+50)/2+") rotate(-90)").text("Average Highway MPG");
-	d3.select("svg").append("text").attr("transform","translate("+(width/2)+","+(height+90)+")").text("Average City MPG");
-
-	d3.select("svg").append("text").attr("transform", "translate("+((width-100)/2)+","+20+")").text("Overview of Fuel Efficency in 2017").style("font-size", "24px");
-
-	d3.select("svg").append("text").attr("transform", "translate("+120+","+(height/2)+")").text("The increasing bubble sizes suggest a trend between # of cylinders and efficency").style("font-size", "14px");
-
-	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+120)+")").text(line).style("font-size", "14px");
-	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+140)+")").text(summaryText).style("font-size", "14px");
-	d3.select("svg").append("text").attr("transform", "translate("+20+","+(height+160)+")").text(summaryText2).style("font-size", "14px");
-
-	d3.select("svg").append("text").attr("transform", "translate("+(width+20)+","+(height+200)+")").text("Next").style("font-size", "20px").attr("fill", "blue")
-		.on("click", function(){window.open("automaker.html", "_self")});
-	d3.select("svg").append("text").attr("transform", "translate("+(width+50)+","+(height+230)+")").text("1").style("font-size", "14px")
-		.on("click", function(){window.open("cylinder.html","_self")});
-
-}
-</script>
-</body>
+  <head>
+    <base target="_top">
+    <?!= include('Stylesheet'); ?>
+  </head>
+  <body>
+    <img src="assets/Chefscorners_logo.png" width="100" height="100">
+    <div>
+     <h3>Item Id</h3>
+     <div id="itemId"></div>
+     <h3>Description</h3>   
+     <div id="description"></div>
+     <h3>Pack</h3>   
+     <div id="pack"></div>
+     <h3>Price</h3>   
+     <div id="price"></div>
+     <h3>Piece Price</h3>   
+     <div id="piecePrice"></div>
+    </div>
+    <?!= include('JavaScript'); ?>
+  </body>
 </html>
