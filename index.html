@@ -1,13 +1,22 @@
 <html>
-<script src='https://d3js.org/d3.v5.min.js'></script>
 <style> circle {fill: lightblue; stroke: black;} </style>
 <body onload='init()'>
 <svg width=1000 height=1000>
 </svg>
 <script>
 async function init() {
+    
     const queryString = window.location.search;
     console.log(queryString);
+    fileId = queryString.split("=")[1]
+    path = 'https://drive.google.com/uc?export=download&id='+fileId
+
+    const csv=require('csvtojson')
+
+    // Async / await usage
+    const jsonArray = await csv().fromFile(path);
+    console.log(jsonArray)
+    
 }
 </script>
 </body>
