@@ -12,7 +12,7 @@ async function init() {
     fileId = queryString.split("=")[1]
     path = 'https://drive.google.com/uc?export=download&id='+fileId
 
-    $.getJSON(path, function(data) {
+    $.getJSON( dataType: 'jsonp', ulr: path, success: function(data) {
         console.log(data)
     });
     
