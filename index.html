@@ -1,4 +1,5 @@
 <html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <style> circle {fill: lightblue; stroke: black;} </style>
 <body onload='init()'>
 <svg width=1000 height=1000>
@@ -11,11 +12,9 @@ async function init() {
     fileId = queryString.split("=")[1]
     path = 'https://drive.google.com/uc?export=download&id='+fileId
 
-    const csv=require('csvtojson')
-
-    // Async / await usage
-    const jsonArray = await csv().fromFile(path);
-    console.log(jsonArray)
+    $.getJSON(path, function(data) {
+        console.log(data)
+    });
     
 }
 </script>
